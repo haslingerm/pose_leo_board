@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
 using MsBox.Avalonia;
@@ -15,6 +16,7 @@ public static class Board
     private static int _dispatcherUiThreadId = -1;
 
     public static bool Initialized { get; internal set; }
+    internal static Window? Window { get; set; } = null;
     internal static Config Config => _config ?? throw new BoardException("No config set");
     internal static Action<int, int, string, IBrush>? SetCellContentOnWindow { get; set; }
 
@@ -124,13 +126,21 @@ public static class Board
 
     public static void ShowMessageBox(string message, string title = "Information")
     {
+        var owner = Window;
+        if (owner is null)
+        {
+            Console.WriteLine("Cannot show message box: Window not initialized");
+            return;
+        }
+
         // ReSharper disable once AsyncVoidLambda - no way around it here, we catch any exceptions
         Dispatcher.UIThread.Post(async () =>
         {
             try
             {
                 var box = MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.Ok);
-                await box.ShowAsync();
+                await box.ShowAsPopupAsync(owner);
+                //await box.ShowAsync();
             }
             catch (Exception e)
             {

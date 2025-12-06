@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
@@ -13,12 +14,15 @@ internal partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        Window? mainWindow = null;
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow();
+            mainWindow = new MainWindow();
+            desktop.MainWindow = mainWindow;
         }
 
         base.OnFrameworkInitializationCompleted();
-        Board.Initialized = true;
+        Board.Window = mainWindow;
+        Board.Initialized = mainWindow is not null;
     }
 }
