@@ -11,13 +11,16 @@ public static class Board
 {
     private static readonly TimeSpan initWaitInterval = TimeSpan.FromMilliseconds(125);
     private static readonly TimeSpan initWaitMax = TimeSpan.FromSeconds(10);
-    private static Config? _config;
     private static readonly ValueCache cellValues = new();
     private static int _dispatcherUiThreadId = -1;
 
     public static bool Initialized { get; internal set; }
     internal static Window? Window { get; set; } = null;
-    internal static Config Config => _config ?? throw new BoardException("No config set");
+    internal static Config Config
+    {
+        get => field ?? throw new BoardException("No config set");
+        private set;
+    }
     internal static Action<int, int, string, IBrush>? SetCellContentOnWindow { get; set; }
 
     public static void InitializeForTest(int rows, int columns)
@@ -28,8 +31,8 @@ public static class Board
 
     private static void Initialize(Config config)
     {
-        _config = config;
-        _config.EnsureValid();
+        config.EnsureValid();
+        Config = config;
         cellValues.Clear();
     }
 
