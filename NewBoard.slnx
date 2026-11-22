@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="LeoBoard/LeoBoard.csproj" />
+  <Project Path="NewBoardTest/NewBoardTest.csproj" />
+</Solution>
